@@ -11,7 +11,10 @@
   "dependencies": {
     "next": "16.0.4",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-hook-form": "^7.48.2",
+    "recharts": "^2.10.3",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

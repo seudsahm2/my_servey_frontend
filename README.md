@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Islamic Learning Survey Platform - Frontend
 
-## Getting Started
+Next.js frontend application for conducting student and teacher surveys with analytics dashboard.
 
-First, run the development server:
+## Features
+
+- ✨ Modern, responsive UI with Tailwind CSS
+- 📝 Student Survey Form (11 questions)
+- 👨‍🏫 Teacher Survey Form (12 questions)
+- 📊 Analytics Dashboard with interactive charts
+- ✅ Form validation with React Hook Form
+- 🎨 Glassmorphism design with gradient animations
+- 📱 Mobile-friendly responsive design
+
+## Quick Start
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Environment
+
+Create `.env.local` file:
+
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api
+```
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` - Landing page with survey selection
+- `/student-survey` - Student survey form (11 questions)
+- `/teacher-survey` - Teacher survey form (12 questions)
+- `/dashboard` - Analytics dashboard with charts
 
-## Learn More
+## Survey Questions
 
-To learn more about Next.js, take a look at the following resources:
+### Student Survey (11 Questions)
+1. Quran reading experience level
+2. Online lessons history
+3. Challenges finding qualified teachers
+4. Available study time
+5. Preferred session length
+6. Preferred frequency
+7. Fair price expectations (ETB)
+8. Subject interests
+9. Trust factors for online teachers
+10. Willingness to try platform
+11. Desired platform features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Teacher Survey (12 Questions)
+1. Teaching background
+2. Online teaching experience
+3. Current teaching challenges
+4. Weekly student capacity
+5. Preferred session length
+6. Fair rate expectations (ETB)
+7. Confident teaching topics
+8. Platform interest
+9. Support needed
+10. Platform concerns
+11. Feedback collection preferences
+12. Early access interest
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
+- Next.js 16.0.4
+- React 19.2.0
+- TypeScript
+- Tailwind CSS
+- React Hook Form
+- Recharts
+- Axios
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Build for Production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```
+
+## Features
+
+### Forms
+- Real-time validation
+- Success animations
+- Error handling
+- Mobile-optimized inputs
+
+### Dashboard
+- Pie charts for distributions
+- Bar charts for preferences
+- Summary statistics
+- Real-time data fetching
+- Loading states
+
+## Design System
+
+- **Colors**: Blue, Purple, Pink gradients
+- **Effects**: Glassmorphism, gradient animations
+- **Typography**: Inter font family
+- **Components**: Rounded corners, hover effects, transitions
