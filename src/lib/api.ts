@@ -51,6 +51,8 @@ const transformStudentAnalytics = (data: StudentAnalyticsResponse): StudentAnaly
         subject,
         count: Number(count) || 0,
     })),
+    age_distribution: data.age_distribution ?? [],
+    age_subjects_interest: data.age_subjects_interest ?? {},
 });
 
 const transformTeacherAnalytics = (data: TeacherAnalyticsResponse): TeacherAnalytics => ({
@@ -66,6 +68,7 @@ const transformTeacherAnalytics = (data: TeacherAnalyticsResponse): TeacherAnaly
         topic,
         count: Number(count) || 0,
     })),
+    age_distribution: data.age_distribution ?? [],
 });
 
 export const loginUser = async (credentials: AuthCredentials): Promise<AuthTokens> => {

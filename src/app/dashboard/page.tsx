@@ -294,6 +294,29 @@ export default function Dashboard() {
                                             </ResponsiveContainer>
                                         </div>
 
+                                        {/* Age Distribution */}
+                                        <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all">
+                                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                                                <span className="text-2xl">🎂</span>
+                                                {t.ageRange}
+                                            </h3>
+                                            <ResponsiveContainer width="100%" height={300}>
+                                                <BarChart data={studentData.age_distribution}>
+                                                    <defs>
+                                                        <linearGradient id="colorAge" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stopColor="#f97316" stopOpacity={0.8} />
+                                                            <stop offset="95%" stopColor="#f97316" stopOpacity={0.3} />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                                    <XAxis dataKey="age_range" stroke="#94a3b8" />
+                                                    <YAxis stroke="#94a3b8" />
+                                                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px' }} />
+                                                    <Bar dataKey="count" fill="url(#colorAge)" radius={[8, 8, 0, 0]} />
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+
                                         {/* Session Length */}
                                         <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all">
                                             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -341,11 +364,11 @@ export default function Dashboard() {
                                         </div>
 
                                         {/* Average Price Card */}
-                                            <div className="p-6 bg-linear-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all flex items-center justify-center">
+                                        <div className="p-6 bg-linear-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all flex items-center justify-center">
                                             <div className="text-center">
                                                 <div className="text-6xl mb-4">💰</div>
                                                 <h3 className="text-gray-300 text-lg mb-4">{t.averageExpectedPrice}</h3>
-                                                    <p className="text-7xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                                                <p className="text-7xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
                                                     {studentData.average_price.toFixed(0)}
                                                 </p>
                                                 <p className="text-2xl text-gray-400">{t.etbPerSession}</p>
@@ -409,12 +432,35 @@ export default function Dashboard() {
                                             </ResponsiveContainer>
                                         </div>
 
+                                        {/* Age Distribution */}
+                                        <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all">
+                                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                                                <span className="text-2xl">🎂</span>
+                                                {t.ageRange}
+                                            </h3>
+                                            <ResponsiveContainer width="100%" height={300}>
+                                                <BarChart data={teacherData.age_distribution}>
+                                                    <defs>
+                                                        <linearGradient id="colorTeacherAge" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
+                                                            <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.3} />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                                    <XAxis dataKey="age_range" stroke="#94a3b8" />
+                                                    <YAxis stroke="#94a3b8" />
+                                                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px' }} />
+                                                    <Bar dataKey="count" fill="url(#colorTeacherAge)" radius={[8, 8, 0, 0]} />
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+
                                         {/* Average Metrics */}
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="p-6 bg-linear-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
                                                 <div className="text-4xl mb-3">👥</div>
                                                 <h3 className="text-gray-300 text-sm mb-2 text-center">{t.avgWeeklyCapacity}</h3>
-                                                    <p className="text-4xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                                <p className="text-4xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                                                     {teacherData.average_students_per_week.toFixed(0)}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">{t.studentsWeek}</p>
@@ -423,7 +469,7 @@ export default function Dashboard() {
                                             <div className="p-6 bg-linear-to-br from-pink-500/20 to-orange-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
                                                 <div className="text-4xl mb-3">💵</div>
                                                 <h3 className="text-gray-300 text-sm mb-2 text-center">{t.avgExpectedRate}</h3>
-                                                    <p className="text-4xl font-bold bg-linear-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
+                                                <p className="text-4xl font-bold bg-linear-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
                                                     {teacherData.average_rate.toFixed(0)}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">{t.etbPerSession}</p>
@@ -432,7 +478,7 @@ export default function Dashboard() {
                                             <div className="col-span-2 p-6 bg-linear-to-br from-green-500/20 to-teal-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
                                                 <div className="text-5xl mb-3">🚀</div>
                                                 <h3 className="text-gray-300 text-sm mb-2">{t.earlyAccessInterest}</h3>
-                                                    <p className="text-5xl font-bold bg-linear-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+                                                <p className="text-5xl font-bold bg-linear-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
                                                     {teacherData.early_access_interest}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">{t.teachersInterested}</p>

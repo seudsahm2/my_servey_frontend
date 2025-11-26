@@ -28,7 +28,7 @@ export default function StudentSurvey() {
     const getFieldsForStep = (step: number): Array<FieldPath<StudentSurveyData>> => {
         switch (step) {
             case 1:
-                return ['full_name', 'phone_number'];
+                return ['full_name', 'age_range', 'phone_number'];
             case 2:
                 return ['quran_experience', 'taken_online_lessons', 'teacher_challenges'];
             case 3:
@@ -241,6 +241,21 @@ export default function StudentSurvey() {
                                                 {errors.full_name.message ?? t.required}
                                             </p>
                                         )}
+                                    </div>
+
+                                    <div>
+                                        <label className="text-base md:text-lg font-semibold text-white mb-3 block">{t.ageRange}</label>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {['8-15', '15-24', '24-32', '32-40', '40+'].map((age) => (
+                                                <label key={age} className="cursor-pointer">
+                                                    <input type="radio" value={age} {...register('age_range', { required: true })} className="peer sr-only" />
+                                                    <div className="p-3 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10 text-center">
+                                                        <span className="font-medium text-white text-sm md:text-base">{age}</span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        {errors.age_range && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
                                     </div>
 
                                     <div>

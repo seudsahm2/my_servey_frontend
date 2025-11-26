@@ -1,7 +1,7 @@
 export interface StudentSurveyData {
     id?: number;
     full_name: string;
-    age: number;
+    age_range: string;
     phone_number: string;
     quran_experience: 'beginner' | 'intermediate' | 'advanced';
     taken_online_lessons: boolean;
@@ -22,7 +22,7 @@ export interface StudentSurveyData {
 export interface TeacherSurveyData {
     id?: number;
     full_name: string;
-    age: number;
+    age_range: string;
     phone_number: string;
     teaching_background: 'madrasa' | 'mosque' | 'private' | 'online' | 'mixed';
     teaching_background_details: string;
@@ -36,6 +36,9 @@ export interface TeacherSurveyData {
     would_join_platform: boolean;
     support_needed: string;
     platform_concerns: string;
+    feedback_preferences: string;
+    wants_early_access: boolean;
+    early_access_contact: string;
     last_updated: string | null;
 }
 
@@ -49,6 +52,8 @@ export interface StudentAnalyticsResponse {
     online_experience: { yes: number; no: number };
     average_price: number;
     subjects_interest: Record<string, number>;
+    age_distribution: Array<{ age_range: string; count: number }>;
+    age_subjects_interest: Record<string, Record<string, number>>;
 }
 
 export interface TeacherAnalyticsResponse {
@@ -61,6 +66,7 @@ export interface TeacherAnalyticsResponse {
     average_students_per_week: number;
     average_rate: number;
     confident_topics: Record<string, number>;
+    age_distribution: Array<{ age_range: string; count: number }>;
 }
 
 export interface StudentAnalytics {
@@ -72,6 +78,8 @@ export interface StudentAnalytics {
     online_experience: { yes: number; no: number };
     average_price: number;
     subjects_interest: Array<{ subject: string; count: number }>;
+    age_distribution: Array<{ age_range: string; count: number }>;
+    age_subjects_interest: Record<string, Record<string, number>>;
 }
 
 export interface TeacherAnalytics {
@@ -84,6 +92,7 @@ export interface TeacherAnalytics {
     average_students_per_week: number;
     average_rate: number;
     confident_topics: Array<{ topic: string; count: number }>;
+    age_distribution: Array<{ age_range: string; count: number }>;
 }
 
 export interface AnalyticsSummary {

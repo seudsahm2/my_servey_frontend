@@ -44,10 +44,12 @@ export const translations = {
         loginSuccess: 'Logged in successfully',
         loginError: 'Invalid credentials',
         secureAccess: 'Secure Admin Access',
+        adminLogin: 'Admin Login',
         fullName: 'Full Name',
         fullNamePlaceholder: 'Enter your full name',
         fullNameMinLength: 'Full name must be at least 3 characters.',
         phoneNumber: 'Phone Number',
+        ageRange: 'Age Range',
         phoneNumberPlaceholder: 'e.g., 911223344',
         invalidPhoneNumber: 'Enter a valid 9-digit Ethiopian phone number.',
         duplicatePhoneNumber: 'This phone number has already been used.',
@@ -59,13 +61,20 @@ export const translations = {
         submit: 'Submit',
         submitting: 'Submitting...',
 
-
         // Success Messages
         thankYou: 'Thank You!',
         redirecting: 'Redirecting...',
         studentSuccess: 'Your insights will help shape the future of Islamic education',
         teacherSuccess: 'Your expertise will help shape our platform',
 
+        idVerificationTitle: 'Identity Verification',
+        idVerificationDesc: 'We need to verify your identity',
+        step1Title: 'About You',
+        step1Desc: 'Tell us about yourself',
+        selectAll: 'Select all that apply',
+        optional: 'Optional',
+
+        // Rest of the translations remain the same...
         // Student Survey
         studentSurvey: 'Student Survey',
         studentStep1Title: 'About You',
@@ -214,14 +223,14 @@ export const translations = {
     },
 
     ar: {
-        // Landing Page - Arabic
+        // Copy all keys from English with Arabic translations
+        // (I'll include the essential ones here - the full file would be very long)
         brandName: 'التعليم الإسلامي',
         dashboard: 'لوحة التحكم',
         tagline: 'بناء مستقبل التعليم الإسلامي',
         heroTitle: 'شارك صوتك',
         heroSubtitle: 'ساعدنا في إنشاء منصة تربط الطلاب بالمعلمين المؤهلين للقرآن والحديث والعربية والفنون الإسلامية',
         heroDescription: 'ستشكل رؤيتك مستقبل التعليم الإسلامي عبر الإنترنت',
-
         forStudents: 'للطلاب',
         studentSurveyTitle: 'استبيان الطالب',
         studentSurveyDesc: 'هل تبحث عن تعلم القرآن أو الحديث أو العربية أو الفنون الإسلامية؟ شارك احتياجاتك وتفضيلاتك.',
@@ -229,24 +238,19 @@ export const translations = {
         studentFeature2: '~5 دقائق',
         studentFeature3: 'مجهول وآمن',
         startSurvey: 'ابدأ الاستبيان',
-
         forTeachers: 'للمعلمين',
         teacherSurveyTitle: 'استبيان المعلم',
         teacherSurveyDesc: 'تدريس المواد الإسلامية؟ ساعدنا في إنشاء منصة تخدم المعلمين بشكل أفضل.',
         teacherFeature1: '12 سؤالاً سريعاً',
         teacherFeature2: '~5 دقائق',
         teacherFeature3: 'فرصة الوصول المبكر',
-
         anonymous: '100٪ مجهول',
         anonymousDesc: 'خصوصيتك محمية',
         quickEasy: 'سريع وسهل',
         quickEasyDesc: 'فقط 5 دقائق',
         makeImpact: 'احدث تأثيراً',
         makeImpactDesc: 'شكل المستقبل',
-
         footerText: '© 2025 منصة التعليم الإسلامي • بناء جسور بين المعرفة والباحثين',
-
-        // Common - Arabic
         backToHome: 'العودة إلى الصفحة الرئيسية',
         username: 'اسم المستخدم',
         password: 'كلمة المرور',
@@ -255,12 +259,14 @@ export const translations = {
         loginSuccess: 'تم تسجيل الدخول بنجاح',
         loginError: 'بيانات الاعتماد غير صالحة',
         secureAccess: 'دخول آمن للمسؤولين',
+        adminLogin: 'دخول المسؤول',
         fullName: 'الاسم الكامل',
         fullNamePlaceholder: 'اكتب اسمك الكامل',
         fullNameMinLength: 'يجب أن يكون الاسم الكامل 3 أحرف على الأقل.',
         phoneNumber: 'رقم الهاتف',
+        ageRange: 'الفئة العمرية',
         phoneNumberPlaceholder: 'مثال: 911223344',
-        invalidPhoneNumber: 'أدخل رقم هاتف إثيوبي صالحًا مكوَّنًا من 9 أرقام.',
+        invalidPhoneNumber: 'أدخل رقم هاتف إثيوبي صالحًا مكوَّنًا من 9 أرقام.',
         duplicatePhoneNumber: 'تم استخدام رقم الهاتف هذا مسبقًا.',
         checkingPhone: 'جارٍ التحقق من رقم الهاتف...',
         phoneCheckFailed: 'تعذر التحقق من رقم الهاتف. حاول مرة أخرى.',
@@ -269,15 +275,16 @@ export const translations = {
         previous: 'السابق',
         submit: 'إرسال',
         submitting: 'جارٍ الإرسال...',
-
-
-        // Success Messages
         thankYou: 'جَزَاكَ اللّٰهُ خَيْرًا!',
         redirecting: 'جاري التحويل...',
         studentSuccess: 'ستساعد رؤيتك في تشكيل مستقبل التعليم الإسلامي',
         teacherSuccess: 'ستساعد خبرتك في تشكيل منصتنا',
-
-        // Student Survey
+        idVerificationTitle: 'التحقق من الهوية',
+        idVerificationDesc: 'نحن بحاجة للتحقق من هويتك',
+        step1Title: 'عنك',
+        step1Desc: 'أخبرنا عن نفسك',
+        selectAll: 'اختر كل ما ينطبق',
+        optional: 'اختياري',
         studentSurvey: 'استبيان الطالب',
         studentStep1Title: 'عنك',
         studentStep1Desc: 'دعنا نفهم خلفيتك',
@@ -287,57 +294,43 @@ export const translations = {
         studentStep3Desc: 'ما الذي يهمك؟',
         studentStep4Title: 'الأفكار النهائية',
         studentStep4Desc: 'ساعدنا في إنشاء المنصة المثالية',
-
-        // Student Questions
         q1: 'ما هي خبرتك في قراءة القرآن؟',
         beginner: 'مبتدئ',
         intermediate: 'متوسط',
         advanced: 'متقدم',
-
         q2: 'هل سبق لك أخذ دروس قرآن عبر الإنترنت؟',
         yes: 'نعم',
         no: 'لا',
         q2placeholder: 'لماذا أو لماذا لا؟ (اختياري)',
-
         q3: 'ما هي التحديات التي تواجهها في إيجاد معلمين؟',
         q3placeholder: 'شارك تحدياتك...',
-
         q4: 'متى تكون متاحًا للدراسة؟',
         mornings: 'الصباح',
         evenings: 'المساء',
         weekends: 'عطلة نهاية الأسبوع',
         flexible: 'مرن',
-
         q5: 'مدة الجلسة',
         minutes: 'دقيقة',
-
         q6: 'التكرار',
         onceWeek: 'مرة/أسبوع',
         twiceWeek: 'مرتين/أسبوع',
         moreOften: 'أكثر من ذلك',
-
         q7: 'السعر العادل لكل جلسة (بر)',
         q7placeholder: 'مثال: 150.00',
-
         q8: 'ما هي المواضيع التي تهمك؟',
         quranReading: 'قراءة القرآن',
         tajweed: 'التجويد',
         hadith: 'الحديث',
         arabicLanguage: 'اللغة العربية',
         islamicArts: 'الفنون الإسلامية',
-
         q9: 'ما الذي يبني ثقتك في معلم عبر الإنترنت؟',
         q9placeholder: 'مثل: الشهادات، التقييمات، جلسة تجريبية...',
-
         q10: 'هل ستجرب هذه المنصة؟',
         yesWould: 'نعم!',
         notSure: 'غير متأكد',
         q10placeholder: 'أخبرنا لماذا (اختياري)',
-
         q11: 'ما هي الميزات الأكثر فائدة؟',
         q11placeholder: 'شارك أفكارك...',
-
-        // Dashboard - Arabic
         loadingAnalytics: 'جاري تحميل التحليلات',
         preparingDashboard: 'جاري إعداد لوحة التحكم...',
         analyticsDashboard: 'لوحة تحكم التحليلات',
@@ -369,8 +362,6 @@ export const translations = {
         teachingTopicsConfidence: 'الثقة في مواضيع التدريس',
         noDataYet: 'لا توجد بيانات استبيان بعد',
         startCollecting: 'ابدأ بجمع رؤى قيمة من الطلاب والمعلمين لرؤية تحليلات جميلة هنا.',
-
-        // Teacher Survey
         teacherSurvey: 'استبيان المعلم',
         teacherStep1Title: 'خلفيتك',
         teacherStep1Desc: 'شارك خبرتك التعليمية',
@@ -380,8 +371,6 @@ export const translations = {
         teacherStep3Desc: 'أفكارك حول الانضمام',
         teacherStep4Title: 'التفاصيل النهائية',
         teacherStep4Desc: 'ساعدنا على التحسين',
-
-        // Teacher Questions
         t1: 'ما هي خلفيتك التدريسية؟',
         madrasa: 'مدرسة',
         mosque: 'مسجد',
@@ -389,35 +378,24 @@ export const translations = {
         online: 'عبر الإنترنت',
         mixed: 'مختلط',
         t1placeholder: 'أخبرنا المزيد (اختياري)',
-
         t2: 'هل حاولت التدريس عبر الإنترنت؟',
         t2placeholder: 'لماذا أو لماذا لا؟ (اختياري)',
-
         t3: 'ما هي التحديات التي تواجهها عند التدريس؟',
         t3placeholder: 'شارك تحدياتك...',
-
         t4: 'طلاب/أسبوع',
         t4placeholder: 'مثال: 10',
-
         t5: 'السعر العادل (بر)',
         t5placeholder: 'مثال: 200',
-
         t6: 'مدة الجلسة',
-
         t7: 'المواضيع التي تشعر بالثقة في تدريسها',
-
         t8: 'هل ستنضم إلى منصة تتولى الجدولة والمطابقة؟',
         yesJoin: 'نعم!',
-
         t9: 'ما الدعم الذي تحتاجه للتدريس بفعالية عبر الإنترنت؟',
         t9placeholder: 'مثال: التدريب التقني، أدوات الجدولة...',
-
         t10: 'أي مخاوف؟',
         t10placeholder: 'شارك أي مخاوف...',
-
         t11: 'كيف يجب جمع ملاحظات الطلاب؟',
         t11placeholder: 'شارك أفكارك...',
-
         t12: 'هل ترغب في الوصول المبكر؟',
         yesSignUp: 'نعم، سجلني!',
         maybeLater: 'ربما لاحقًا',
@@ -425,50 +403,47 @@ export const translations = {
     },
 
     am: {
-        // Landing Page - Amharic
+        // Amharic translations
         brandName: 'የእስላማዊ ትምህርት',
         dashboard: 'ዳሽቦርድ',
         tagline: 'የእስላማዊ ትምህርትን ወደፊት መገንባት',
         heroTitle: 'ድምጽዎን ያጋሩ',
         heroSubtitle: 'ተማሪዎችን ከተመራመረ የቁርአን፣ ሐዲስ፣ አረብኛ እና እስላማዊ ጥበቦች መምህራን ጋር የሚያገናኝ መድረክ እንድንፈጥር ይርዱን',
         heroDescription: 'ግንዛቤዎ የመስመር ላይ እስላማዊ ትምህርት ወደፊትን ይቀርጻል',
-
         forStudents: 'ለተማሪዎች',
         studentSurveyTitle: 'የተማሪ ዳሰሳ',
         studentSurveyDesc: 'ቁርአን፣ ሐዲስ፣ አረብኛ ወይም እስላማዊ ጥበቦችን ለመማር ይፈልጋሉ? ፍላጎቶችዎን እና ምርጫዎችዎን ያጋሩ።',
         studentFeature1: '11 ፈጣን ጥያቄዎች',
         studentFeature2: '~5 ደቂቃዎች',
-        studentFeature3: 'ስም-አልባ እና ደህንነቱ የተጠበቀshutdown',
+        studentFeature3: 'ስም-አልባ እና ደህንነቱ የተጠበቀ',
         startSurvey: 'ዳሰሳ ጀምር',
-
         forTeachers: 'ለመምህራን',
         teacherSurveyTitle: 'የመምህራን ዳሰሳ',
         teacherSurveyDesc: ' የእስላማዊ ትምህርቶችን ያስተምራሉ? አስተማሪዎችን በተሻለ ሁኔታ የሚያገለግል መድረክ እንድንፈጥር ይርዱን።',
         teacherFeature1: '12 ፈጣን ጥያቄዎች',
         teacherFeature2: '~5 ደቂቃዎች',
         teacherFeature3: 'ቀደም ያለ የመዳረሻ እድል',
-
         anonymous: '100% ስም-አልባ',
         anonymousDesc: 'ግላዊነትዎ የተጠበቀ ነው',
         quickEasy: 'ፈጣን እና ቀላል',
         quickEasyDesc: 'ብቻ 5 ደቂቃዎች',
         makeImpact: 'ተጽዕኖ ያድርጉ',
         makeImpactDesc: 'ወደፊትን ቅረጹ',
-
         footerText: '© 2025 የእስላማዊ ትምህርት መድረክ • በእውቀት እና ፈላጊዎች መካከል ድልድዮችን መገንባት',
-
-        // Common - Amharic
         backToHome: 'ወደ መነሻ ገጽ ተመለስ',
+        username: 'የተጠቀሚ ስም',
         password: 'የይለፍ ቃል',
         login: 'ግባ',
         logout: 'ውጣ',
         loginSuccess: 'በተሳካ ሁኔታ ገብተዋል',
         loginError: 'የተሳሳተ መረጃ',
         secureAccess: 'ደህንነቱ የተጠበቀ የአስተዳዳሪ መግቢያ',
+        adminLogin: 'የአስተዳዳሪ መግቢያ',
         fullName: 'ሙሉ ስም',
         fullNamePlaceholder: 'ሙሉ ስምዎን ያስገቡ',
         fullNameMinLength: 'ሙሉ ስም ቢያንስ 3 ቁምፊዎች ሊኖረው ይገባል።',
         phoneNumber: 'ስልክ ቁጥር',
+        ageRange: 'የዕድሜ ክልል',
         phoneNumberPlaceholder: 'ለምሳሌ፡ 911223344',
         invalidPhoneNumber: 'እባክዎን ትክክለኛ 9 አሃዝ ያለው የኢትዮጵያ ስልክ ቁጥር ያስገቡ።',
         duplicatePhoneNumber: 'ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል።',
@@ -479,15 +454,16 @@ export const translations = {
         previous: 'ቀደም',
         submit: 'አስገባ',
         submitting: 'በመላክ ላይ...',
-
-
-        // Success Messages
         thankYou: 'አመሰግናለሁ!',
         redirecting: 'በማዞር ላይ...',
         studentSuccess: 'ግንዛቤዎ የእስላማዊ ትምህርትን ወደፊት ለመቅረጽ ይረዳል',
         teacherSuccess: 'እውቀትዎ መድረኩን ለመቅረጽ ይረዳል',
-
-        // Student Survey
+        idVerificationTitle: 'የማንነት ማረጋገጫ',
+        idVerificationDesc: 'ማንነትዎን ማረጋገጥ አለብን',
+        step1Title: 'ስለ እርስዎ',
+        step1Desc: 'ስለ እርስዎ ይንገሩን',
+        selectAll: 'የሚመለከተውን ሁሉ ይምረጡ',
+        optional: 'አማራጭ',
         studentSurvey: 'የተማሪ ዳሰሳ',
         studentStep1Title: 'ስለ እርስዎ',
         studentStep1Desc: 'ዳራዎን እንረዳ',
@@ -497,57 +473,43 @@ export const translations = {
         studentStep3Desc: 'ምን ያስገርምዎታል?',
         studentStep4Title: 'የመጨረሻ ሀሳቦች',
         studentStep4Desc: 'ፍጹም መድረክ እንድንፈጥር ይርዱን',
-
-        // Student Questions
         q1: 'የቁርአን የንባብ ልምድዎ ምንድነው?',
         beginner: 'ጀማሪ',
         intermediate: 'መካከለኛ',
         advanced: 'ከፍተኛ',
-
         q2: 'ቀድሞ የቁርአን ትምህርት በመስመር ላይ ወስደው ያውቃሉ?',
         yes: 'አዎ',
         no: 'አይደለም',
         q2placeholder: 'ለምን ወይም ለምን አይደለም? (አማራጭ)',
-
         q3: 'መምህራንን በማግኘት ረገድ ምን ፈተናዎች ያጋጥሙዎታል?',
         q3placeholder: 'ፈተናዎችዎን ያጋሩ...',
-
         q4: 'መቼ ለመማር ይገኛሉ?',
         mornings: 'ጠዋት',
         evenings: 'ማታ',
         weekends: 'ቅዳሜና እሁድ',
         flexible: 'ተለዋዋጭ',
-
         q5: 'የክፍለ ጊዜ ርዝመት',
         minutes: 'ደቂቃ',
-
         q6: 'ድግግሞሽ',
         onceWeek: 'አንድ ጊዜ/ሳምንት',
         twiceWeek: 'ሁለት ጊዜ/ሳምንት',
         moreOften: 'ብዙ ጊዜ',
-
         q7: 'ለእያንዳንዱ ክፍለ ጊዜ ተመጣጣኝ ዋጋ (ብር)',
         q7placeholder: 'ለምሳሌ: 150.00',
-
         q8: 'የትኞቹ ርዕሶች ያስገርምዎታል?',
         quranReading: 'የቁርአን ንባብ',
         tajweed: 'ታጅዊድ',
         hadith: 'ሐዲስ',
         arabicLanguage: 'የአረብኛ ቋንቋ',
         islamicArts: 'የእስላማዊ ጥበቦች',
-
         q9: 'በመስመር ላይ መምህር ላይ መተማመንዎን ምን ይገነባል?',
         q9placeholder: 'ለምሳሌ: ምስክርነቶች፣ ግምገማዎች፣የሙከራ ክፍለ ጊዜ...',
-
         q10: 'ይህን መድረክ ይሞክራሉ?',
         yesWould: 'አዎ!',
         notSure: 'እርግጠኛ አይደለሁም',
         q10placeholder: 'ለምን እንደሆነ ይንገሩን (አማራጭ)',
-
         q11: 'የትኞቹ ባህሪዎች በጣም ጠቃሚ ይሆናሉ?',
         q11placeholder: 'ሀሳቦችዎን ያጋሩ...',
-
-        // Dashboard - Amharic
         loadingAnalytics: 'ትንታኔዎችን በመጫን ላይ',
         preparingDashboard: 'ዳሽቦርድዎን በማዘጋጀት ላይ...',
         analyticsDashboard: 'የትንታኔ ዳሽቦርድ',
@@ -579,8 +541,6 @@ export const translations = {
         teachingTopicsConfidence: 'የማስተማር ርዕሶች በራስ መተማመን',
         noDataYet: 'ምንም የዳሰሳ ውሂብ የለም',
         startCollecting: 'እዚህ የሚያምሩ ትንታኔዎችን ለማየት ከተማሪዎች እና ከመምህራን ጠቃሚ ግንዛቤዎችን መሰብሰብ ይጀምሩ።',
-
-        // Teacher Survey
         teacherSurvey: 'የመምህራን ዳሰሳ',
         teacherStep1Title: 'የእርስዎ ዳራ',
         teacherStep1Desc: 'የማስተማር ልምድዎን ያጋሩ',
@@ -590,8 +550,6 @@ export const translations = {
         teacherStep3Desc: 'ስለመቀላቀል ሀሳቦችዎ',
         teacherStep4Title: 'የመጨረሻ ዝርዝሮች',
         teacherStep4Desc: 'ለማሻሻል ይርዱን',
-
-        // Teacher Questions
         t1: 'የማስተማር ዳራዎ ምንድነው?',
         madrasa: 'መደረሳ',
         mosque: 'መስጊድ',
@@ -599,35 +557,24 @@ export const translations = {
         online: 'በመስመር ላይ',
         mixed: 'ድብልቅ',
         t1placeholder: 'ተጨማሪ ይንገሩን (አማራጭ)',
-
         t2: 'በመስመር ላይ ማስተማር ሞክረው ያውቃሉ?',
         t2placeholder: 'ለምን ወይም ለምን አይደለም? (አማራጭ)',
-
         t3: 'በማስተማር ጊዜ ምን ፈተናዎች ያጋጥሙዎታል?',
         t3placeholder: 'ፈተናዎችዎን ያጋሩ...',
-
         t4: 'ተማሪዎች/ሳምንት',
         t4placeholder: 'ለምሳሌ: 10',
-
         t5: 'ተመጣጣኝ ተመን (ብር)',
         t5placeholder: 'ለምሳሌ: 200',
-
         t6: 'የክፍለ ጊዜ ርዝመት',
-
         t7: 'በማስተማር ላይ በራስ የሚተማመኑባቸው ርዕሶች',
-
         t8: 'መርሐግብርን እና ማዛመድን የሚይዝ መድረክ ይቀላቀላሉ?',
         yesJoin: 'አዎ!',
-
         t9: 'በመስመር ላይ በብቃት ለማስተማር ምን ድጋፍ ያስፈልግዎታል?',
         t9placeholder: 'ለምሳሌ: የቴክኒክ ስልጠና፣ የመርሐግብር መሳሪያዎች...',
-
         t10: 'ማንኛውም ስጋቶች?',
         t10placeholder: 'ማንኛውንም ስጋቶች ያጋሩ...',
-
         t11: 'የተማሪዎች ግብረ መልስ እንዴት መሰብሰብ አለበት?',
         t11placeholder: 'ሀሳቦችዎን ያጋሩ...',
-
         t12: 'ቀደም ያለ መዳረሻ ይፈልጋሉ?',
         yesSignUp: 'አዎ፣ ያስመዝግቡኝ!',
         maybeLater: 'ምናልባት በኋላ',

@@ -27,7 +27,7 @@ export default function TeacherSurvey() {
     const getFieldsForStep = (step: number): Array<FieldPath<TeacherSurveyData>> => {
         switch (step) {
             case 1:
-                return ['phone_number'];
+                return ['full_name', 'age_range', 'phone_number'];
             case 2:
                 return ['teaching_background', 'tried_online_teaching', 'teaching_challenges'];
             case 3:
@@ -168,6 +168,32 @@ export default function TeacherSurvey() {
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.teacherStep1Title}</h3>
                                         <p className="text-gray-400 text-sm md:text-base">{t.teacherStep1Desc}</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-base md:text-lg font-semibold text-white mb-3 block">{t.fullName}</label>
+                                        <input
+                                            type="text"
+                                            {...register('full_name', { required: true, minLength: 3 })}
+                                            placeholder={t.fullNamePlaceholder}
+                                            className="w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-all text-base md:text-lg font-semibold"
+                                        />
+                                        {errors.full_name && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="text-base md:text-lg font-semibold text-white mb-3 block">{t.ageRange}</label>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {['8-15', '15-24', '24-32', '32-40', '40+'].map((age) => (
+                                                <label key={age} className="cursor-pointer">
+                                                    <input type="radio" value={age} {...register('age_range', { required: true })} className="peer sr-only" />
+                                                    <div className="p-3 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-purple-500 peer-checked:bg-purple-500/10 hover:bg-white/10 text-center">
+                                                        <span className="font-medium text-white text-sm md:text-base">{age}</span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        {errors.age_range && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
                                     </div>
 
                                     <div>
