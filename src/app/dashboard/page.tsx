@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/AuthContext';
 import { getStudentAnalytics, getTeacherAnalytics, getAnalyticsSummary } from '@/lib/api';
 import type { StudentAnalytics, TeacherAnalytics, AnalyticsSummary } from '@/types/survey';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -18,29 +20,40 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'teachers'>('overview');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [students, teachers, summaryData] = await Promise.all([
-                    getStudentAnalytics(),
-                    getTeacherAnalytics(),
-                    getAnalyticsSummary()
-                ]);
-                setStudentData(students);
-                setTeacherData(teachers);
-                setSummary(summaryData);
-            } catch (error) {
-                console.error('Error fetching analytics:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
+    const { isAuthenticated, loading: authLoading, logout } = useAuth();
+    const router = useRouter();
 
-    if (loading) {
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.push('/admin/login');
+        }
+    }, [isAuthenticated, authLoading, router]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            const fetchData = async () => {
+                try {
+                    const [students, teachers, summaryData] = await Promise.all([
+                        getStudentAnalytics(),
+                        getTeacherAnalytics(),
+                        getAnalyticsSummary()
+                    ]);
+                    setStudentData(students);
+                    setTeacherData(teachers);
+                    setSummary(summaryData);
+                } catch (error) {
+                    console.error('Error fetching analytics:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchData();
+        }
+    }, [isAuthenticated]);
+
+    if (loading || authLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center" dir={isRTL ? 'rtl' : 'ltr'}>
+            <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center" dir={isRTL ? 'rtl' : 'ltr'}>
                 <div className="text-center">
                     <div className="relative w-24 h-24 mx-auto mb-6">
                         <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
@@ -56,9 +69,14 @@ export default function Dashboard() {
     }
 
     const hasData = (summary?.total_responses || 0) > 0;
+    const tabs: Array<{ id: 'overview' | 'students' | 'teachers'; label: string; icon: string }> = [
+        { id: 'overview', label: t.overview, icon: '📊' },
+        { id: 'students', label: t.students, icon: '📚' },
+        { id: 'teachers', label: t.teachers, icon: '👨‍🏫' }
+    ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
             {/* Animated Background Effects */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -77,12 +95,24 @@ export default function Dashboard() {
                                 </svg>
                                 <span className="font-medium">{t.backToHome}</span>
                             </Link>
-                            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 animate-fade-in">
+                            <h1 className="text-5xl md:text-6xl font-bold bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 animate-fade-in">
                                 {t.analyticsDashboard}
                             </h1>
                             <p className="text-gray-400 text-lg">{t.realTimeInsights}</p>
                         </div>
                         <div className="flex gap-2">
+                            <button
+                                onClick={() => {
+                                    logout();
+                                    router.push('/admin/login');
+                                }}
+                                className="px-4 py-2 bg-red-500/10 backdrop-blur-sm border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/20 transition-all flex items-center gap-2"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                {t.logout}
+                            </button>
                             <button className="px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all flex items-center gap-2">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -94,16 +124,12 @@ export default function Dashboard() {
 
                     {/* Tab Navigation */}
                     <div className="flex gap-2 mb-8 p-1 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 w-fit">
-                        {[
-                            { id: 'overview', label: t.overview, icon: '📊' },
-                            { id: 'students', label: t.students, icon: '📚' },
-                            { id: 'teachers', label: t.teachers, icon: '👨‍🏫' }
-                        ].map((tab) => (
+                        {tabs.map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id as any)}
+                                onClick={() => setActiveTab(tab.id)}
                                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === tab.id
-                                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/50'
+                                    ? 'bg-linear-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/50'
                                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >
@@ -148,20 +174,20 @@ export default function Dashboard() {
                                                 className="relative group"
                                                 style={{ animationDelay: `${index * 100}ms` }}
                                             >
-                                                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all"></div>
+                                                <div className="absolute inset-0 bg-linear-to-r from-white/10 to-white/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all"></div>
                                                 <div className="relative p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
-                                                    <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.bg} rounded-full blur-2xl opacity-50`}></div>
+                                                    <div className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br ${stat.bg} rounded-full blur-2xl opacity-50`}></div>
                                                     <div className="relative">
                                                         <div className="flex items-center justify-between mb-4">
                                                             <span className="text-5xl">{stat.icon}</span>
-                                                            <div className={`w-12 h-12 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                                                            <div className={`w-12 h-12 bg-linear-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
                                                                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                                                 </svg>
                                                             </div>
                                                         </div>
                                                         <h3 className="text-gray-400 text-sm font-medium mb-2">{stat.title}</h3>
-                                                        <p className={`text-5xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
+                                                        <p className={`text-5xl font-bold bg-linear-to-r ${stat.gradient} bg-clip-text text-transparent`}>
                                                             {stat.value}
                                                         </p>
                                                     </div>
@@ -315,11 +341,11 @@ export default function Dashboard() {
                                         </div>
 
                                         {/* Average Price Card */}
-                                        <div className="p-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all flex items-center justify-center">
+                                            <div className="p-6 bg-linear-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all flex items-center justify-center">
                                             <div className="text-center">
                                                 <div className="text-6xl mb-4">💰</div>
                                                 <h3 className="text-gray-300 text-lg mb-4">{t.averageExpectedPrice}</h3>
-                                                <p className="text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                                                    <p className="text-7xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
                                                     {studentData.average_price.toFixed(0)}
                                                 </p>
                                                 <p className="text-2xl text-gray-400">{t.etbPerSession}</p>
@@ -385,28 +411,28 @@ export default function Dashboard() {
 
                                         {/* Average Metrics */}
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="p-6 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
+                                            <div className="p-6 bg-linear-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
                                                 <div className="text-4xl mb-3">👥</div>
                                                 <h3 className="text-gray-300 text-sm mb-2 text-center">{t.avgWeeklyCapacity}</h3>
-                                                <p className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                                    <p className="text-4xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                                                     {teacherData.average_students_per_week.toFixed(0)}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">{t.studentsWeek}</p>
                                             </div>
 
-                                            <div className="p-6 bg-gradient-to-br from-pink-500/20 to-orange-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
+                                            <div className="p-6 bg-linear-to-br from-pink-500/20 to-orange-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
                                                 <div className="text-4xl mb-3">💵</div>
                                                 <h3 className="text-gray-300 text-sm mb-2 text-center">{t.avgExpectedRate}</h3>
-                                                <p className="text-4xl font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
+                                                    <p className="text-4xl font-bold bg-linear-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
                                                     {teacherData.average_rate.toFixed(0)}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">{t.etbPerSession}</p>
                                             </div>
 
-                                            <div className="col-span-2 p-6 bg-gradient-to-br from-green-500/20 to-teal-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
+                                            <div className="col-span-2 p-6 bg-linear-to-br from-green-500/20 to-teal-500/20 backdrop-blur-xl rounded-2xl border border-white/10 flex flex-col items-center justify-center">
                                                 <div className="text-5xl mb-3">🚀</div>
                                                 <h3 className="text-gray-300 text-sm mb-2">{t.earlyAccessInterest}</h3>
-                                                <p className="text-5xl font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+                                                    <p className="text-5xl font-bold bg-linear-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
                                                     {teacherData.early_access_interest}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">{t.teachersInterested}</p>
@@ -442,7 +468,7 @@ export default function Dashboard() {
                     ) : (
                         /* No Data State */
                         <div className="p-12 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 text-center animate-fade-in">
-                            <div className="w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <div className="w-32 h-32 bg-linear-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
@@ -452,11 +478,11 @@ export default function Dashboard() {
                                 {t.startCollecting}
                             </p>
                             <div className="flex gap-4 justify-center flex-wrap">
-                                <Link href="/student-survey" className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-2xl hover:shadow-blue-500/50 transition-all font-semibold flex items-center gap-2">
+                                <Link href="/student-survey" className="px-8 py-4 bg-linear-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-2xl hover:shadow-blue-500/50 transition-all font-semibold flex items-center gap-2">
                                     <span>📚</span>
                                     {t.studentSurvey}
                                 </Link>
-                                <Link href="/teacher-survey" className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all font-semibold flex items-center gap-2">
+                                <Link href="/teacher-survey" className="px-8 py-4 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all font-semibold flex items-center gap-2">
                                     <span>👨‍🏫</span>
                                     {t.teacherSurvey}
                                 </Link>

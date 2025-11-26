@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import type { FieldPath } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { submitTeacherSurvey } from '@/lib/api';
 import type { TeacherSurveyData } from '@/types/survey';
 import { useLanguage } from '@/lib/LanguageContext';
 import { languageNames, Language } from '@/lib/translations';
+import { isAxiosError } from 'axios';
 
 const TOTAL_STEPS = 5;
 
@@ -22,30 +24,36 @@ export default function TeacherSurvey() {
     const topics = [t.quranReading, t.tajweed, t.hadith, t.arabicLanguage, t.islamicArts];
     const topicValues = ['Quran Reading', 'Tajweed', 'Hadith', 'Arabic Language', 'Islamic Arts'];
 
+    const getFieldsForStep = (step: number): Array<FieldPath<TeacherSurveyData>> => {
+        switch (step) {
+            case 1:
+                return ['phone_number'];
+            case 2:
+                return ['teaching_background', 'tried_online_teaching', 'teaching_challenges'];
+            case 3:
+                return ['students_per_week', 'fair_rate_etb', 'preferred_session_length', 'confident_topics'];
+            case 4:
+                return ['would_join_platform', 'support_needed'];
+            case 5:
+                return ['feedback_preferences', 'wants_early_access'];
+            default:
+                return [];
+        }
+    };
+
     const nextStep = async () => {
         const fields = getFieldsForStep(currentStep);
-        const isValid = await trigger(fields as any);
+        const isValid = await trigger(fields);
         if (isValid && currentStep < TOTAL_STEPS) {
-            setCurrentStep(currentStep + 1);
+            setCurrentStep((step) => step + 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
+            setCurrentStep((step) => step - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
-
-    const getFieldsForStep = (step: number) => {
-        switch (step) {
-            case 1: return ['phone_number'];
-            case 2: return ['teaching_background', 'tried_online_teaching', 'teaching_challenges'];
-            case 3: return ['students_per_week', 'preferred_session_length', 'fair_rate_etb', 'confident_topics'];
-            case 4: return ['would_join_platform', 'support_needed', 'platform_concerns'];
-            case 5: return ['feedback_preferences', 'wants_early_access'];
-            default: return [];
         }
     };
 
@@ -55,9 +63,9 @@ export default function TeacherSurvey() {
             await submitTeacherSurvey(data);
             setIsSuccess(true);
             setTimeout(() => router.push('/'), 4000);
-        } catch (error: any) {
-            console.error('Error submitting survey:', error);
-            if (error.response?.data?.phone_number) {
+        } catch (error: unknown) {
+            console.error('Error submitting teacher survey:', error);
+            if (isAxiosError(error) && error.response?.data?.phone_number) {
                 alert(t.duplicatePhoneNumber);
             } else {
                 alert('Error submitting survey. Please try again.');
@@ -72,10 +80,10 @@ export default function TeacherSurvey() {
 
     if (isSuccess) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
                 <div className="w-full max-w-md p-8 md:p-12 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 text-center animate-fade-in shadow-2xl">
                     <div className="relative mb-6">
-                        <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto animate-bounce shadow-lg">
+                        <div className="w-20 h-20 md:w-24 md:h-24 bg-linear-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto animate-bounce shadow-lg">
                             <svg className="w-10 h-10 md:w-12 md:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                             </svg>
@@ -93,7 +101,7 @@ export default function TeacherSurvey() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
@@ -101,7 +109,6 @@ export default function TeacherSurvey() {
 
             <div className="relative z-10 py-6 md:py-8 px-4">
                 <div className="max-w-3xl mx-auto">
-                    {/* Header with Language Selector */}
                     <div className="flex justify-between items-center mb-6">
                         <Link href="/" className="inline-flex items-center text-purple-400 hover:text-purple-300 group transition-all">
                             <svg className={`w-5 h-5 ${isRTL ? 'ml-2 group-hover:translate-x-1' : 'mr-2 group-hover:-translate-x-1'} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +117,6 @@ export default function TeacherSurvey() {
                             <span className="font-medium text-sm md:text-base">{t.backToHome}</span>
                         </Link>
 
-                        {/* Language Selector */}
                         <div className="flex gap-2">
                             {(['en', 'ar', 'am'] as Language[]).map((lang) => (
                                 <button
@@ -127,7 +133,6 @@ export default function TeacherSurvey() {
                         </div>
                     </div>
 
-                    {/* Progress Section */}
                     <div className="mb-6 md:mb-8">
                         <div className="flex justify-between items-center mb-3">
                             <h2 className="text-xl md:text-2xl font-bold text-white">{t.teacherSurvey}</h2>
@@ -137,7 +142,7 @@ export default function TeacherSurvey() {
                         </div>
                         <div className="relative h-2 md:h-3 bg-white/10 rounded-full overflow-hidden">
                             <div
-                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
+                                className="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
@@ -155,16 +160,14 @@ export default function TeacherSurvey() {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="p-6 md:p-8 lg:p-10 bg-white/5 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/10 min-h-[500px]">
-
-                            {/* Step 1: Identity Verification */}
                             {currentStep === 1 && (
                                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                                     <div className="text-center mb-6 md:mb-8">
-                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
                                             <span className="text-2xl md:text-3xl">📱</span>
                                         </div>
-                                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.identityVerification}</h3>
-                                        <p className="text-gray-400 text-sm md:text-base">{t.identityVerificationDesc}</p>
+                                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.teacherStep1Title}</h3>
+                                        <p className="text-gray-400 text-sm md:text-base">{t.teacherStep1Desc}</p>
                                     </div>
 
                                     <div>
@@ -182,10 +185,10 @@ export default function TeacherSurvey() {
                                                     }
                                                 })}
                                                 placeholder={t.phoneNumberPlaceholder}
-                                                className="w-full p-3 md:p-4 pl-16 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-all text-base md:text-lg font-semibold tracking-wide"
+                                                className="w-full p-3 md:p-4 pl-24 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-all text-base md:text-lg font-semibold tracking-wide"
                                                 dir="ltr"
                                             />
-                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold border-r border-white/10 pr-3">
+                                            <div className="pointer-events-none select-none absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-semibold border-r border-white/10 pr-4">
                                                 +251
                                             </div>
                                         </div>
@@ -195,11 +198,10 @@ export default function TeacherSurvey() {
                                 </div>
                             )}
 
-                            {/* Step 2: Your Background */}
                             {currentStep === 2 && (
                                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                                     <div className="text-center mb-6 md:mb-8">
-                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
                                             <span className="text-2xl md:text-3xl">🕌</span>
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.teacherStep1Title}</h3>
@@ -236,7 +238,15 @@ export default function TeacherSurvey() {
                                         <div className="grid grid-cols-2 gap-3 mb-3">
                                             {[{ value: true, label: t.yes }, { value: false, label: t.no }].map((option) => (
                                                 <label key={String(option.value)} className="cursor-pointer">
-                                                    <input type="radio" value={String(option.value)} {...register('tried_online_teaching', { required: true })} className="peer sr-only" />
+                                                    <input
+                                                        type="radio"
+                                                        value={String(option.value)}
+                                                        {...register('tried_online_teaching', {
+                                                            required: true,
+                                                            setValueAs: (value) => value === 'true'
+                                                        })}
+                                                        className="peer sr-only"
+                                                    />
                                                     <div className="p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-purple-500 peer-checked:bg-purple-500/10 hover:bg-white/10 text-center">
                                                         <span className="font-medium text-white text-sm md:text-base">{option.label}</span>
                                                     </div>
@@ -259,11 +269,10 @@ export default function TeacherSurvey() {
                                 </div>
                             )}
 
-                            {/* Step 3: Capacity & Rates */}
                             {currentStep === 3 && (
                                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                                     <div className="text-center mb-6 md:mb-8">
-                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
                                             <span className="text-2xl md:text-3xl">💼</span>
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.teacherStep2Title}</h3>
@@ -320,7 +329,7 @@ export default function TeacherSurvey() {
                                                 <label key={topicValues[idx]} className="cursor-pointer">
                                                     <input type="checkbox" value={topicValues[idx]} {...register('confident_topics', { required: true })} className="peer sr-only" />
                                                     <div className="p-3 md:p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-purple-500 peer-checked:bg-purple-500/10 hover:bg-white/10 flex items-center gap-3">
-                                                        <div className="w-5 h-5 border-2 border-white/30 rounded peer-checked:bg-purple-500 peer-checked:border-purple-500 flex items-center justify-center flex-shrink-0">
+                                                        <div className="w-5 h-5 border-2 border-white/30 rounded peer-checked:bg-purple-500 peer-checked:border-purple-500 flex items-center justify-center shrink-0">
                                                             <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                             </svg>
@@ -335,11 +344,10 @@ export default function TeacherSurvey() {
                                 </div>
                             )}
 
-                            {/* Step 4: Platform Interest */}
                             {currentStep === 4 && (
                                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                                     <div className="text-center mb-6 md:mb-8">
-                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
                                             <span className="text-2xl md:text-3xl">🚀</span>
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.teacherStep3Title}</h3>
@@ -354,7 +362,15 @@ export default function TeacherSurvey() {
                                                 { value: false, label: t.notSure, icon: '🤔' }
                                             ].map((option) => (
                                                 <label key={String(option.value)} className="cursor-pointer">
-                                                    <input type="radio" value={String(option.value)} {...register('would_join_platform', { required: true })} className="peer sr-only" />
+                                                    <input
+                                                        type="radio"
+                                                        value={String(option.value)}
+                                                        {...register('would_join_platform', {
+                                                            required: true,
+                                                            setValueAs: (value) => value === 'true'
+                                                        })}
+                                                        className="peer sr-only"
+                                                    />
                                                     <div className="p-4 md:p-5 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-purple-500 peer-checked:bg-purple-500/10 hover:bg-white/10">
                                                         <div className="text-center">
                                                             <span className="text-3xl md:text-4xl block mb-2">{option.icon}</span>
@@ -392,11 +408,10 @@ export default function TeacherSurvey() {
                                 </div>
                             )}
 
-                            {/* Step 5: Final Details */}
                             {currentStep === 5 && (
                                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                                     <div className="text-center mb-6 md:mb-8">
-                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
                                             <span className="text-2xl md:text-3xl">✨</span>
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.teacherStep4Title}</h3>
@@ -422,7 +437,15 @@ export default function TeacherSurvey() {
                                                 { value: false, label: t.maybeLater, icon: '⏰' }
                                             ].map((option) => (
                                                 <label key={String(option.value)} className="cursor-pointer">
-                                                    <input type="radio" value={String(option.value)} {...register('wants_early_access', { required: true })} className="peer sr-only" />
+                                                    <input
+                                                        type="radio"
+                                                        value={String(option.value)}
+                                                        {...register('wants_early_access', {
+                                                            required: true,
+                                                            setValueAs: (value) => value === 'true'
+                                                        })}
+                                                        className="peer sr-only"
+                                                    />
                                                     <div className="p-4 md:p-5 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-purple-500 peer-checked:bg-purple-500/10 hover:bg-white/10">
                                                         <div className="text-center">
                                                             <span className="text-3xl md:text-4xl block mb-2">{option.icon}</span>
@@ -443,7 +466,6 @@ export default function TeacherSurvey() {
                                 </div>
                             )}
 
-                            {/* Navigation */}
                             <div className={`flex ${isRTL ? 'flex-row-reverse' : ''} justify-between items-center mt-8 md:mt-12 pt-6 md:pt-8 border-t border-white/10`}>
                                 <button
                                     type="button"
@@ -461,7 +483,7 @@ export default function TeacherSurvey() {
                                     <button
                                         type="button"
                                         onClick={nextStep}
-                                        className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all flex items-center gap-2 text-sm md:text-base"
+                                        className="px-6 md:px-8 py-3 md:py-4 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all flex items-center gap-2 text-sm md:text-base"
                                     >
                                         <span>{t.next}</span>
                                         <svg className={`w-4 h-4 md:w-5 md:h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -472,7 +494,7 @@ export default function TeacherSurvey() {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-green-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm md:text-base"
+                                        className="px-6 md:px-8 py-3 md:py-4 bg-linear-to-r from-green-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-green-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm md:text-base"
                                     >
                                         {isSubmitting ? (
                                             <>

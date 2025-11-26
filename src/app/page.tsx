@@ -9,7 +9,7 @@ export default function Home() {
   const isRTL = language === 'ar';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -24,8 +24,8 @@ export default function Home() {
             key={lang}
             onClick={() => setLanguage(lang)}
             className={`px-3 md:px-4 py-2 rounded-lg font-medium text-xs md:text-sm transition-all ${language === lang
-                ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/50'
-                : 'bg-white/10 backdrop-blur-sm text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
+              ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/50'
+              : 'bg-white/10 backdrop-blur-sm text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
               }`}
           >
             {languageNames[lang]}
@@ -38,14 +38,11 @@ export default function Home() {
         <header className="p-4 md:p-6">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-linear-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                 <span className="text-xl md:text-2xl">📚</span>
               </div>
               <span className="text-white font-bold text-lg md:text-2xl">{t.brandName}</span>
             </div>
-            <Link href="/dashboard" className="px-4 md:px-6 py-2 md:py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all text-sm md:text-base font-medium">
-              {t.dashboard}
-            </Link>
           </div>
         </header>
 
@@ -72,7 +69,7 @@ export default function Home() {
               <div className="group">
                 <div className="p-6 md:p-8 bg-white/5 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105">
                   <div className="mb-4 md:mb-6">
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4">
+                    <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4">
                       <span className="text-2xl md:text-4xl">🎓</span>
                     </div>
                     <p className="text-xs md:text-sm text-purple-400 font-semibold mb-1 md:mb-2">{t.forStudents}</p>
@@ -90,7 +87,7 @@ export default function Home() {
 
                   <Link
                     href="/student-survey"
-                    className="block w-full py-3 md:py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all text-center text-sm md:text-base"
+                    className="block w-full py-3 md:py-4 bg-linear-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all text-center text-sm md:text-base"
                   >
                     {t.startSurvey} →
                   </Link>
@@ -101,7 +98,7 @@ export default function Home() {
               <div className="group">
                 <div className="p-6 md:p-8 bg-white/5 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/10 hover:border-pink-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20 hover:scale-105">
                   <div className="mb-4 md:mb-6">
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4">
+                    <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4">
                       <span className="text-2xl md:text-4xl">👨‍🏫</span>
                     </div>
                     <p className="text-xs md:text-sm text-purple-400 font-semibold mb-1 md:mb-2">{t.forTeachers}</p>
@@ -119,7 +116,7 @@ export default function Home() {
 
                   <Link
                     href="/teacher-survey"
-                    className="block w-full py-3 md:py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-pink-500/50 transition-all text-center text-sm md:text-base"
+                    className="block w-full py-3 md:py-4 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-pink-500/50 transition-all text-center text-sm md:text-base"
                   >
                     {t.startSurvey} →
                   </Link>
@@ -150,8 +147,14 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="p-4 md:p-6">
-          <div className="max-w-7xl mx-auto text-center">
+          <div className="max-w-7xl mx-auto text-center flex flex-col items-center gap-2">
             <p className="text-xs md:text-sm text-gray-500">{t.footerText}</p>
+            <Link href="/admin/login" className="text-gray-600 hover:text-gray-400 transition-colors">
+              <span className="sr-only">{t.adminLogin}</span>
+              <svg className="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </Link>
           </div>
         </footer>
       </div>

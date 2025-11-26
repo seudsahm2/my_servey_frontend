@@ -1,6 +1,7 @@
-// Type definitions for survey data
-
 export interface StudentSurveyData {
+    id?: number;
+    full_name: string;
+    age: number;
     phone_number: string;
     quran_experience: 'beginner' | 'intermediate' | 'advanced';
     taken_online_lessons: boolean;
@@ -15,9 +16,13 @@ export interface StudentSurveyData {
     willing_to_try: boolean;
     willing_to_try_reason: string;
     desired_features: string;
+    submitted_at?: string;
 }
 
 export interface TeacherSurveyData {
+    id?: number;
+    full_name: string;
+    age: number;
     phone_number: string;
     teaching_background: 'madrasa' | 'mosque' | 'private' | 'online' | 'mixed';
     teaching_background_details: string;
@@ -31,16 +36,37 @@ export interface TeacherSurveyData {
     would_join_platform: boolean;
     support_needed: string;
     platform_concerns: string;
-    feedback_preferences: string;
-    wants_early_access: boolean;
-    early_access_contact: string;
+    last_updated: string | null;
+}
+
+export interface StudentAnalyticsResponse {
+    total_responses: number;
+    experience_distribution: Array<{ quran_experience: string; count: number }>;
+    session_length_preferences: Array<{ preferred_session_length: number; count: number }>;
+    frequency_preferences: Array<{ preferred_frequency: string; count: number }>;
+    time_preferences: Array<{ time_preference: string; count: number }>;
+    willingness_to_try: { willing: number; not_willing: number };
+    online_experience: { yes: number; no: number };
+    average_price: number;
+    subjects_interest: Record<string, number>;
+}
+
+export interface TeacherAnalyticsResponse {
+    total_responses: number;
+    background_distribution: Array<{ teaching_background: string; count: number }>;
+    session_length_preferences: Array<{ preferred_session_length: number; count: number }>;
+    platform_interest: { would_join: number; would_not_join: number };
+    online_teaching_experience: { tried: number; not_tried: number };
+    early_access_interest: number;
+    average_students_per_week: number;
+    average_rate: number;
+    confident_topics: Record<string, number>;
 }
 
 export interface StudentAnalytics {
     total_responses: number;
     experience_distribution: Array<{ quran_experience: string; count: number }>;
     session_length_distribution: Array<{ preferred_session_length: number; count: number }>;
-    frequency_distribution: Array<{ preferred_frequency: string; count: number }>;
     time_preference_distribution: Array<{ time_preference: string; count: number }>;
     willingness: { willing: number; not_willing: number };
     online_experience: { yes: number; no: number };
@@ -53,7 +79,7 @@ export interface TeacherAnalytics {
     teaching_background_distribution: Array<{ teaching_background: string; count: number }>;
     session_length_distribution: Array<{ preferred_session_length: number; count: number }>;
     platform_interest: { would_join: number; would_not_join: number };
-    online_experience: { tried: number; not_tried: number };
+    online_teaching_experience: { tried: number; not_tried: number };
     early_access_interest: number;
     average_students_per_week: number;
     average_rate: number;
