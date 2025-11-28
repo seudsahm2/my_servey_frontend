@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense, lazy } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
@@ -10,22 +10,17 @@ import { useLanguage } from '@/lib/LanguageContext';
 import dynamic from 'next/dynamic';
 
 // Dynamic imports for Recharts - lazy load heavy components
-const BarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.BarChart })), {
-    loading: () => <div className="h-64 bg-white/5 rounded-xl animate-pulse" />,
-    ssr: false
-});
-const Bar = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar })), { ssr: false });
-const PieChart = dynamic(() => import('recharts').then(mod => ({ default: mod.PieChart })), {
-    loading: () => <div className="h-64 bg-white/5 rounded-xl animate-pulse" />,
-    ssr: false
-});
-const Pie = dynamic(() => import('recharts').then(mod => ({ default: mod.Pie })), { ssr: false });
-const Cell = dynamic(() => import('recharts').then(mod => ({ default: mod.Cell })), { ssr: false });
-const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis })), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis })), { ssr: false });
-const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip })), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })), { ssr: false });
+// Using 'as any' to bypass strict type checking for dynamic imports of class components
+const BarChart = dynamic(() => import('recharts').then(mod => mod.BarChart as any), { ssr: false });
+const Bar = dynamic(() => import('recharts').then(mod => mod.Bar as any), { ssr: false });
+const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart as any), { ssr: false });
+const Pie = dynamic(() => import('recharts').then(mod => mod.Pie as any), { ssr: false });
+const Cell = dynamic(() => import('recharts').then(mod => mod.Cell as any), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis as any), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis as any), { ssr: false });
+const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid as any), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip as any), { ssr: false });
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer as any), { ssr: false });
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#f97316'];
 
