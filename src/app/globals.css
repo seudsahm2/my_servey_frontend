@@ -41,4 +41,35 @@
 /* Font */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  /* Font rendering optimization */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Performance optimizations */
+* {
+  /* Reduce repaints */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Optimize animations */
+.animate-gradient {
+  will-change: background-position;
+}
+
+.animate-fade-in, .animate-slide-up {
+  will-change: opacity, transform;
+}
+
+/* Reduce layout shifts - reserve space for loading states */
+img, video {
+  /* Prevent layout shift */
+  content-visibility: auto;
+}
+
+/* Hardware acceleration for smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
