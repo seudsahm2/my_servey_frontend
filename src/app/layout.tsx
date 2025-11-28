@@ -18,7 +18,41 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Islamic Learning Survey Platform",
-  description: "Help shape the future of Islamic education by sharing your insights",
+  description: "Help shape the future of Islamic education by sharing your insights. Connect students with qualified teachers of Quran, Hadith, Arabic & Islamic arts.",
+  metadataBase: new URL('https://my-servey-frontend.vercel.app'),
+
+  openGraph: {
+    title: "Islamic Learning Survey Platform",
+    description: "Help shape the future of Islamic education by sharing your insights. Connect students with qualified teachers of Quran, Hadith, Arabic & Islamic arts.",
+    url: "https://my-servey-frontend.vercel.app/",
+    siteName: "Islamic Learning Survey Platform",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Islamic Learning Survey Platform - Building the Future of Islamic Education",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Islamic Learning Survey Platform",
+    description: "Help shape the future of Islamic education by sharing your insights",
+    images: ["/og-image.png"],
+  },
+
+  icons: {
+    icon: "/favicon.ico",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
