@@ -10,9 +10,36 @@ import type { TeacherSurveyData } from '@/types/survey';
 import { useLanguage } from '@/lib/LanguageContext';
 import { languageNames, Language } from '@/lib/translations';
 import { isAxiosError } from 'axios';
+import type { Metadata } from 'next';
 
 const TOTAL_STEPS = 5;
 
+export const metadata: Metadata = {
+    // Title: Targeting teachers and their topics (Quran, Tajweed, Hadith)
+    title: "Teacher Survey: Shape the Future of Online Islamic Education",
+    
+    // Description: Explaining the survey's goal for teachers
+    description: "Are you an Ustaz/teacher of Islamic subjects? Share your experience, challenges, and compensation expectations to help us build a dedicated online teaching platform.",
+    
+    // Keywords: Targeting teacher-specific search terms
+    keywords: [
+        "online Quran teacher survey",
+        "Islamic studies teacher platform",
+        "Ustaz teaching online",
+        "online Tajweed teaching compensation",
+        "Hadith teacher challenges",
+        "online Arabic teaching jobs",
+        "teacher recruitment survey"
+    ],
+    
+    // Canonical link pointing to the teacher survey page
+    alternates: {
+        canonical: '/teacher-survey', // Adjust if your path is different
+    },
+    
+    // We generally want this recruitment/market research page indexed
+    robots: 'index, follow',
+};
 export default function TeacherSurvey() {
     const router = useRouter();
     const { language, setLanguage, t } = useLanguage();

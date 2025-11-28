@@ -10,8 +10,29 @@ import type { StudentSurveyData } from '@/types/survey';
 import { useLanguage } from '@/lib/LanguageContext';
 import { languageNames, Language } from '@/lib/translations';
 import { isAxiosError } from 'axios';
+import { Metadata } from 'next'; // Import Metadata type for the local export
 
 const TOTAL_STEPS = 5;
+
+// Local Metadata: Highly optimized for student research and niche keywords
+export const metadata: Metadata = {
+    title: "Student Survey: Future of Online Islamic Learning (Quran, Hadith, Arabic)",
+    description: "Participate in this short survey to help researchers understand the demand, pricing, and scheduling preferences for online Islamic education courses and Ustaz instructors.",
+    keywords: [
+        "online Quran course survey", 
+        "Arabic language learning demand", 
+        "Islamic studies student feedback", 
+        "Hadith lessons online research",
+        "Islamic learning preferences",
+        "online education market research"
+    ],
+    // Canonical link points to the survey page itself
+    alternates: {
+        canonical: '/student-survey',
+    },
+    // Ensure this page is indexed
+    robots: 'index, follow',
+};
 
 export default function StudentSurvey() {
     const router = useRouter();
