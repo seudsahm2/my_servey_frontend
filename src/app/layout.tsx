@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE", // Add this after linking to Google Search Console
+    google: "07aEkZ5yV_f4TrJpsaGrtlL412CmCDy_ecJ7bEAO2V0", // Add this after linking to Google Search Console
   },
 };
 
