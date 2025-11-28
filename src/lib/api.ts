@@ -31,7 +31,10 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     if (typeof window !== 'undefined') {
         const token = localStorage.getItem('accessToken');
-        if (token) {
+        // Only add auth header for analytics and admin endpoints, NOT for survey submissions
+        const isProtectedEndpoint = config.url?.includes('/analytics/') || config.url?.includes('/token');
+
+        if (token && isProtectedEndpoint) {
             config.headers = config.headers ?? {};
             config.headers.Authorization = `Bearer ${token}`;
         }
