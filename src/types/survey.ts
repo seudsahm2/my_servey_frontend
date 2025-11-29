@@ -3,6 +3,7 @@ export interface StudentSurveyData {
     full_name: string;
     age_range: string;
     phone_number: string;
+    gender: 'male' | 'female';
     quran_experience: 'beginner' | 'intermediate' | 'advanced';
     taken_online_lessons: boolean;
     online_lessons_reason: string;
@@ -16,6 +17,7 @@ export interface StudentSurveyData {
     willing_to_try: boolean;
     willing_to_try_reason: string;
     desired_features: string;
+    dynamic_responses?: Record<string, string>; // Store answers to dynamic questions
     submitted_at?: string;
 }
 
@@ -24,6 +26,7 @@ export interface TeacherSurveyData {
     full_name: string;
     age_range: string;
     phone_number: string;
+    gender: 'male' | 'female';
     teaching_background: 'madrasa' | 'mosque' | 'private' | 'online' | 'mixed';
     teaching_background_details: string;
     tried_online_teaching: boolean;
@@ -39,7 +42,19 @@ export interface TeacherSurveyData {
     feedback_preferences: string;
     wants_early_access: boolean;
     early_access_contact: string;
+    dynamic_responses?: Record<string, string>; // Store answers to dynamic questions
     last_updated: string | null;
+}
+
+export interface DynamicQuestion {
+    id: string;
+    text: string;
+    type: 'text' | 'choice';
+    options?: string[];
+}
+
+export interface QuestionBank {
+    [topic: string]: DynamicQuestion[];
 }
 
 export interface StudentAnalyticsResponse {

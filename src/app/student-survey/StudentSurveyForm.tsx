@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import type { FieldPath } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { submitStudentSurvey, checkStudentPhoneAvailability } from '@/lib/api';
-import type { StudentSurveyData } from '@/types/survey';
+import type { StudentSurveyData, QuestionBank, DynamicQuestion } from '@/types/survey';
 import { useLanguage } from '@/lib/LanguageContext';
 import { languageNames, Language } from '@/lib/translations';
 import { isAxiosError } from 'axios';
+import { useSurveyQuestions } from '@/lib/useSurveyQuestions';
 
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 // Local Metadata: Highly optimized for student research and niche keywords
 
@@ -28,17 +29,42 @@ export default function StudentSurveyForm() {
     const subjects = [t.quranReading, t.tajweed, t.hadith, t.arabicLanguage, t.islamicArts];
     const subjectValues = ['Quran Reading', 'Tajweed', 'Hadith', 'Arabic Language', 'Islamic Arts'];
 
+    const { getQuestionsBySection, loading: questionsLoading } = useSurveyQuestions('student');
+
+    const selectedSubjects = getValues('subjects_of_interest');
+    const dynamicQuestions = useMemo(() => {
+        if (!selectedSubjects || selectedSubjects.length === 0) return [];
+        let questions: DynamicQuestion[] = [];
+        selectedSubjects.forEach(subject => {
+            const sectionQuestions = getQuestionsBySection(subject);
+            if (sectionQuestions.length > 0) {
+                const limit = selectedSubjects.length > 1 ? 1 : 2;
+                questions = [...questions, ...sectionQuestions.slice(0, limit)];
+            }
+        });
+        return questions;
+    }, [selectedSubjects, getQuestionsBySection]);
+
     const getFieldsForStep = (step: number): Array<FieldPath<StudentSurveyData>> => {
         switch (step) {
             case 1:
                 return ['full_name', 'age_range', 'phone_number'];
             case 2:
-                return ['quran_experience', 'taken_online_lessons', 'teacher_challenges'];
+                return ['subjects_of_interest'];
             case 3:
-                return ['time_preference', 'preferred_session_length', 'preferred_frequency'];
+                // Dynamic questions + conditional fields
+                // We return empty here as we handle validation manually or via required attributes for dynamic fields
+                // But we should include the static conditional fields if they are rendered
+                const fields: Array<FieldPath<StudentSurveyData>> = [];
+                if (selectedSubjects?.includes('Quran Reading')) {
+                    fields.push('quran_experience');
+                }
+                return fields;
             case 4:
-                return ['fair_price_etb', 'subjects_of_interest', 'trust_factors'];
+                return ['taken_online_lessons', 'teacher_challenges', 'time_preference', 'preferred_session_length', 'preferred_frequency'];
             case 5:
+                return ['fair_price_etb', 'trust_factors'];
+            case 6:
                 return ['willing_to_try', 'desired_features'];
             default:
                 return [];
@@ -112,13 +138,26 @@ export default function StudentSurveyForm() {
     const onSubmit = async (data: StudentSurveyData) => {
         setIsSubmitting(true);
         try {
+            console.log('Submitting student survey data:', data);
             await submitStudentSurvey(data);
             setIsSuccess(true);
             setTimeout(() => router.push('/'), 4000);
         } catch (error: unknown) {
             console.error('Error submitting survey:', error);
-            if (isAxiosError(error) && error.response?.data?.phone_number) {
-                alert(t.duplicatePhoneNumber);
+            if (isAxiosError(error)) {
+                console.error('Response data:', error.response?.data);
+                console.error('Response status:', error.response?.status);
+                if (error.response?.data?.phone_number) {
+                    alert(t.duplicatePhoneNumber);
+                } else if (error.response?.data) {
+                    // Show specific validation errors if available
+                    const errorMsg = typeof error.response.data === 'object'
+                        ? JSON.stringify(error.response.data, null, 2)
+                        : String(error.response.data);
+                    alert(`Error submitting survey: ${errorMsg}`);
+                } else {
+                    alert('Error submitting survey. Please try again.');
+                }
             } else {
                 alert('Error submitting survey. Please try again.');
             }
@@ -202,7 +241,7 @@ export default function StudentSurveyForm() {
                             />
                         </div>
                         <div className="flex justify-between mt-3 px-1">
-                            {[1, 2, 3, 4, 5].map((step) => (
+                            {[1, 2, 3, 4, 5, 6].map((step) => (
                                 <div key={step} className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold transition-all ${step < currentStep ? 'bg-blue-500 text-white' :
                                     step === currentStep ? 'bg-blue-500 text-white scale-110' :
                                         'bg-white/10 text-gray-500'
@@ -262,6 +301,23 @@ export default function StudentSurveyForm() {
                                     </div>
 
                                     <div>
+                                        <label className="text-base md:text-lg font-semibold text-white mb-3 block">{t.gender}</label>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {['male', 'female'].map((g) => (
+                                                <label key={g} className="cursor-pointer">
+                                                    <input type="radio" value={g} {...register('gender', { required: true })} className="peer sr-only" />
+                                                    <div className="p-3 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10 text-center">
+                                                        <span className="font-medium text-white text-sm md:text-base">
+                                                            {g === 'male' ? t.male : t.female}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        {errors.gender && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
+                                    </div>
+
+                                    <div>
                                         <label className="text-base md:text-lg font-semibold text-white mb-3 block">{t.phoneNumber}</label>
                                         <div className="relative">
                                             <input
@@ -285,14 +341,52 @@ export default function StudentSurveyForm() {
                                             </p>
                                         )}
                                         {isCheckingPhone && (
-                                            <p className="text-blue-300 mt-2 text-sm">{t.checkingPhone}</p>
+                                            <div className="flex items-center gap-2 mt-2 text-blue-300 animate-pulse">
+                                                <div className="w-4 h-4 border-2 border-blue-300 border-t-transparent rounded-full animate-spin"></div>
+                                                <span className="text-sm font-medium">{t.checkingPhone}</span>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
                             )}
 
-                            {/* Step 2: About You */}
+                            {/* Step 2: Interests */}
                             {currentStep === 2 && (
+                                <div className="space-y-6 md:space-y-8 animate-fade-in">
+                                    <div className="text-center mb-6 md:mb-8">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                            <span className="text-2xl md:text-3xl">🎯</span>
+                                        </div>
+                                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.studentStep3Title}</h3>
+                                        <p className="text-gray-400 text-sm md:text-base">{t.studentStep3Desc}</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-base md:text-lg font-semibold text-white mb-3 block">
+                                            {t.q8} <span className="text-sm text-gray-400">({t.selectAll})</span>
+                                        </label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                                            {subjects.map((subject, idx) => (
+                                                <label key={subjectValues[idx]} className="cursor-pointer">
+                                                    <input type="checkbox" value={subjectValues[idx]} {...register('subjects_of_interest', { required: true })} className="peer sr-only" />
+                                                    <div className="p-3 md:p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10 flex items-center gap-3">
+                                                        <div className="w-5 h-5 border-2 border-white/30 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center shrink-0">
+                                                            <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                        <span className="text-white font-medium text-sm md:text-base">{subject}</span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        {errors.subjects_of_interest && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Step 3: Specific Questions (Dynamic) */}
+                            {currentStep === 3 && (
                                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                                     <div className="text-center mb-6 md:mb-8">
                                         <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
@@ -302,30 +396,98 @@ export default function StudentSurveyForm() {
                                         <p className="text-gray-400 text-sm md:text-base">{t.step1Desc}</p>
                                     </div>
 
-                                    <div>
-                                        <label className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4 block">{t.q1}</label>
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                            {[
-                                                { value: 'beginner', label: t.beginner, icon: '🌱' },
-                                                { value: 'intermediate', label: t.intermediate, icon: '📚' },
-                                                { value: 'advanced', label: t.advanced, icon: '⭐' }
-                                            ].map((level) => (
-                                                <label key={level.value} className="cursor-pointer">
-                                                    <input type="radio" value={level.value} {...register('quran_experience', { required: true })} className="peer sr-only" />
-                                                    <div className="p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10">
-                                                        <div className="text-center">
-                                                            <span className="text-2xl md:text-3xl block mb-1">{level.icon}</span>
-                                                            <span className="font-medium text-white capitalize text-sm md:text-base">{level.label}</span>
+                                    {/* Quran Experience (Conditional) */}
+                                    {selectedSubjects?.includes('Quran Reading') && (
+                                        <div>
+                                            <label className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4 block">{t.q1}</label>
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                {[
+                                                    { value: 'beginner', label: t.beginner, icon: '🌱' },
+                                                    { value: 'intermediate', label: t.intermediate, icon: '📚' },
+                                                    { value: 'advanced', label: t.advanced, icon: '⭐' }
+                                                ].map((level) => (
+                                                    <label key={level.value} className="cursor-pointer">
+                                                        <input type="radio" value={level.value} {...register('quran_experience', { required: true })} className="peer sr-only" />
+                                                        <div className="p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10">
+                                                            <div className="text-center">
+                                                                <span className="text-2xl md:text-3xl block mb-1">{level.icon}</span>
+                                                                <span className="font-medium text-white capitalize text-sm md:text-base">{level.label}</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </label>
-                                            ))}
+                                                    </label>
+                                                ))}
+                                            </div>
+                                            {errors.quran_experience && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
                                         </div>
-                                        {errors.quran_experience && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
+                                    )}
+
+                                    {/* Dynamic Questions */}
+                                    {dynamicQuestions.length > 0 ? (
+                                        dynamicQuestions.map((q) => (
+                                            <div key={q.id}>
+                                                <label className="text-base md:text-lg font-semibold text-white mb-3 block">{q.text}</label>
+                                                {q.type === 'choice' && q.options ? (
+                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                        {q.options.map((option) => (
+                                                            <label key={option} className="cursor-pointer">
+                                                                <input
+                                                                    type="radio"
+                                                                    value={option}
+                                                                    {...register(`dynamic_responses.${q.id}` as any, { required: true })}
+                                                                    className="peer sr-only"
+                                                                />
+                                                                <div className="p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10 text-center">
+                                                                    <span className="font-medium text-white text-sm md:text-base">{option}</span>
+                                                                </div>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <textarea
+                                                        {...register(`dynamic_responses.${q.id}` as any, { required: true })}
+                                                        className="w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none transition-all text-sm md:text-base"
+                                                        rows={3}
+                                                        placeholder={t.q11placeholder}
+                                                    />
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        !selectedSubjects?.includes('Quran Reading') && (
+                                            <div className="text-center text-gray-400">
+                                                <p>No specific questions for your selection. Please proceed.</p>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Step 4: Learning Preferences */}
+                            {currentStep === 4 && (
+                                <div className="space-y-6 md:space-y-8 animate-fade-in">
+                                    <div className="text-center mb-6 md:mb-8">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                            <span className="text-2xl md:text-3xl">⏰</span>
+                                        </div>
+                                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.studentStep2Title}</h3>
+                                        <p className="text-gray-400 text-sm md:text-base">{t.studentStep2Desc}</p>
                                     </div>
 
                                     <div>
-                                        <label className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4 block">{t.q2}</label>
+                                        <label className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4 block">
+                                            {(() => {
+                                                const subjects = getValues('subjects_of_interest');
+                                                if (!subjects || subjects.length === 0) return t.q2;
+                                                if (subjects.length > 1) return t.q2.replace('Quran', 'Islamic');
+                                                const subject = subjects[0];
+                                                if (subject === 'Quran Reading') return t.q2;
+                                                if (subject === 'Tajweed') return t.q2.replace('Quran', 'Tajweed');
+                                                if (subject === 'Hadith') return t.q2.replace('Quran', 'Hadith');
+                                                if (subject === 'Arabic Language') return t.q2.replace('Quran', 'Arabic');
+                                                if (subject === 'Islamic Arts') return t.q2.replace('Quran', 'Islamic Arts');
+                                                return t.q2;
+                                            })()}
+                                        </label>
                                         <div className="grid grid-cols-2 gap-3">
                                             {[{ value: true, label: t.yes }, { value: false, label: t.no }].map((option) => (
                                                 <label key={String(option.value)} className="cursor-pointer">
@@ -356,20 +518,6 @@ export default function StudentSurveyForm() {
                                             placeholder={t.q3placeholder}
                                         />
                                         {errors.teacher_challenges && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
-                                    </div>
-                                </div>
-                            )
-                            }
-
-                            {/* Step 3: Schedule */}
-                            {currentStep === 3 && (
-                                <div className="space-y-6 md:space-y-8 animate-fade-in">
-                                    <div className="text-center mb-6 md:mb-8">
-                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
-                                            <span className="text-2xl md:text-3xl">⏰</span>
-                                        </div>
-                                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t.studentStep2Title}</h3>
-                                        <p className="text-gray-400 text-sm md:text-base">{t.studentStep2Desc}</p>
                                     </div>
 
                                     <div>
@@ -434,9 +582,9 @@ export default function StudentSurveyForm() {
                                 </div>
                             )}
 
-                            {/* Step 4: Topics & Budget */}
+                            {/* Step 5: Logistics & Trust */}
                             {
-                                currentStep === 4 && (
+                                currentStep === 5 && (
                                     <div className="space-y-6 md:space-y-8 animate-fade-in">
                                         <div className="text-center mb-6 md:mb-8">
                                             <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
@@ -459,28 +607,6 @@ export default function StudentSurveyForm() {
                                         </div>
 
                                         <div>
-                                            <label className="text-base md:text-lg font-semibold text-white mb-3 block">
-                                                {t.q8} <span className="text-sm text-gray-400">({t.selectAll})</span>
-                                            </label>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
-                                                {subjects.map((subject, idx) => (
-                                                    <label key={subjectValues[idx]} className="cursor-pointer">
-                                                        <input type="checkbox" value={subjectValues[idx]} {...register('subjects_of_interest', { required: true })} className="peer sr-only" />
-                                                        <div className="p-3 md:p-4 bg-white/5 border-2 border-white/10 rounded-xl transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:bg-white/10 flex items-center gap-3">
-                                                            <div className="w-5 h-5 border-2 border-white/30 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center shrink-0">
-                                                                <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                            </div>
-                                                            <span className="text-white font-medium text-sm md:text-base">{subject}</span>
-                                                        </div>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                            {errors.subjects_of_interest && <p className="text-red-400 mt-2 text-sm">{t.required}</p>}
-                                        </div>
-
-                                        <div>
                                             <label className="text-base md:text-lg font-semibold text-white mb-3 block">{t.q9}</label>
                                             <textarea
                                                 {...register('trust_factors', { required: true })}
@@ -494,9 +620,9 @@ export default function StudentSurveyForm() {
                                 )
                             }
 
-                            {/* Step 5: Final Thoughts */}
+                            {/* Step 6: Final Thoughts */}
                             {
-                                currentStep === 5 && (
+                                currentStep === 6 && (
                                     <div className="space-y-6 md:space-y-8 animate-fade-in">
                                         <div className="text-center mb-6 md:mb-8">
                                             <div className="w-12 h-12 md:w-16 md:h-16 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">

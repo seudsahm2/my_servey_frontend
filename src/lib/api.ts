@@ -98,6 +98,14 @@ export const submitTeacherSurvey = async (data: TeacherSurveyData) => {
     return response.data;
 };
 
+export const checkTeacherPhoneAvailability = async (phone: string) => {
+    const response = await api.get<{ valid: boolean; exists: boolean }>(
+        '/surveys/teacher/check-phone/',
+        { params: { phone } }
+    );
+    return response.data;
+};
+
 // Analytics APIs
 export const getStudentAnalytics = async (): Promise<StudentAnalytics> => {
     const response = await api.get<StudentAnalyticsResponse>('/analytics/students/');
@@ -111,6 +119,90 @@ export const getTeacherAnalytics = async (): Promise<TeacherAnalytics> => {
 
 export const getAnalyticsSummary = async (): Promise<AnalyticsSummary> => {
     const response = await api.get('/analytics/summary/');
+    return response.data;
+};
+
+// Filtered Analytics
+export interface FilterParams {
+    gender?: 'male' | 'female';
+    age_range?: string;
+    min_price?: number;
+    max_price?: number;
+    frequency?: string;
+    session_length?: number;
+    platform_interest?: 'willing' | 'not_willing';
+}
+
+export interface FilteredAnalyticsResponse {
+    total_students: number;
+    total_teachers: number;
+    filters_applied: FilterParams;
+    gender_distribution: Array<{ gender: string; count: number }>;
+    age_distribution: Array<{ age_range: string; count: number }>;
+    session_distribution: Array<{ preferred_session_length: number; count: number }>;
+    frequency_distribution: Array<{ preferred_frequency: string; count: number }>;
+    platform_interest: {
+        students: { willing: number; not_willing: number };
+        teachers: { willing: number; not_willing: number };
+    };
+    average_prices: {
+        student_price: number;
+        teacher_rate: number;
+    };
+    age_gender_matrix: Array<{ age_range: string; gender: string; count: number }>;
+    price_session_matrix: Array<{ price_range: string; session_length: number; count: number }>;
+}
+
+export const getFilteredAnalytics = async (filters: FilterParams): Promise<FilteredAnalyticsResponse> => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            params.append(key, String(value));
+        }
+    });
+    const response = await api.get(`/analytics/filtered/?${params.toString()}`);
+    return response.data;
+};
+
+// User Management
+export interface User {
+    id: number;
+    type: 'student' | 'teacher';
+    name: string;
+    phone: string;
+    gender: string;
+    age_range: string;
+    session_length: number;
+    frequency?: string;
+    price: number;
+    platform_interest: boolean;
+    subjects?: string[];
+    submitted_at: string | null;
+}
+
+export interface UserListResponse {
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+    users: User[];
+}
+
+export interface UserFilterParams extends FilterParams {
+    user_type?: 'all' | 'student' | 'teacher';
+    search?: string;
+    page?: number;
+    page_size?: number;
+}
+
+export const getUserList = async (filters: UserFilterParams): Promise<UserListResponse> => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            params.append(key, String(value));
+        }
+    });
+    const response = await api.get(`/users/list/?${params.toString()}`);
     return response.data;
 };
 

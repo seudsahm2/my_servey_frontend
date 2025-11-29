@@ -6,8 +6,9 @@ import Link from 'next/link';                              // Next Link componen
 import { useRouter } from 'next/navigation';               // Next app-router navigation hook
 // Project imports
 import { useAuth } from '@/lib/AuthContext';               // auth context (isAuthenticated, logout, etc.)
-import { getStudentAnalytics, getTeacherAnalytics, getAnalyticsSummary } from '@/lib/api'; // API helpers
+import { getStudentAnalytics, getTeacherAnalytics, getAnalyticsSummary, getFilteredAnalytics, type FilterParams, type FilteredAnalyticsResponse } from '@/lib/api'; // API helpers
 import type { StudentAnalytics, TeacherAnalytics, AnalyticsSummary } from '@/types/survey';  // data types
+import AnalyticsFilters from '@/components/AnalyticsFilters'; // filter component
 import { useLanguage } from '@/lib/LanguageContext';       // language and translations hook
 
 // Recharts will be lazy-loaded at runtime using import() inside useEffect
@@ -27,8 +28,11 @@ export default function Dashboard() {
     const [studentData, setStudentData] = useState<StudentAnalytics | null>(null); // student analytics
     const [teacherData, setTeacherData] = useState<TeacherAnalytics | null>(null); // teacher analytics
     const [summary, setSummary] = useState<AnalyticsSummary | null>(null);         // summary analytics
+    const [filteredData, setFilteredData] = useState<FilteredAnalyticsResponse | null>(null); // filtered analytics
     const [loading, setLoading] = useState(true);                                 // page loading flag
+    const [filterLoading, setFilterLoading] = useState(false);                    // filter loading
     const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'teachers'>('overview'); // active tab
+    const [showFilters, setShowFilters] = useState(false);                        // show/hide filters
 
     // hold the dynamically imported Recharts module namespace
     const [Recharts, setRecharts] = useState<RechartsNamespace | null>(null);
@@ -115,6 +119,19 @@ export default function Dashboard() {
         fetchData(); // invoke
     }, [isAuthenticated, logout, router]);
 
+    // handle filter changes
+    const handleFilterChange = async (filters: FilterParams) => {
+        setFilterLoading(true);
+        try {
+            const data = await getFilteredAnalytics(filters);
+            setFilteredData(data);
+        } catch (error) {
+            console.error('Failed to fetch filtered analytics:', error);
+        } finally {
+            setFilterLoading(false);
+        }
+    };
+
     // show loading spinner while initial data or auth is loading
     if (loading || authLoading) {
         return (
@@ -173,6 +190,20 @@ export default function Dashboard() {
                         </div>
 
                         <div className="flex gap-2">
+                            <Link
+                                href="/dashboard/users"
+                                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-all flex items-center gap-2"
+                            >
+                                <span className="text-xl">👥</span>
+                                User Management
+                            </Link>
+                            <Link
+                                href="/dashboard/questions"
+                                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-all flex items-center gap-2"
+                            >
+                                <span className="text-xl">📝</span> Manage Questions
+                            </Link>
+
                             <button
                                 onClick={() => {
                                     logout(); router.push('/admin/login');
@@ -210,6 +241,131 @@ export default function Dashboard() {
                             </button>
                         ))}
                     </div>
+
+                    {/* Advanced Filters Section */}
+                    {activeTab === 'overview' && (
+                        <div className="mb-8">
+                            <button
+                                onClick={() => setShowFilters(!showFilters)}
+                                className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-white rounded-xl hover:from-blue-500/30 hover:to-purple-500/30 transition-all flex items-center justify-center md:justify-start gap-2 mb-4"
+                            >
+                                <span className="text-2xl">🔍</span>
+                                <span className="font-semibold">{showFilters ? 'Hide' : 'Show'} Advanced Analytics & Heatmaps</span>
+                                <svg className={`w-5 h-5 transition-transform ${showFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            {showFilters && (
+                                <div className="space-y-6 animate-fade-in">
+                                    <AnalyticsFilters onFilterChange={handleFilterChange} loading={filterLoading} />
+
+                                    {filteredData && (
+                                        <>
+                                            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                                                <p className="text-green-300 font-medium">
+                                                    ✅ Filtered Results: {filteredData.total_students} students, {filteredData.total_teachers} teachers
+                                                </p>
+                                            </div>
+
+                                            {/* Heatmaps */}
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                {/* Age × Gender Heatmap */}
+                                                {filteredData.age_gender_matrix && filteredData.age_gender_matrix.length > 0 && (
+                                                    <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10">
+                                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                                                            <span className="text-2xl">🔥</span>
+                                                            Age × Gender Distribution Heatmap
+                                                        </h3>
+                                                        <div style={{ minHeight: 300 }}>
+                                                            {Recharts ? (
+                                                                <Recharts.ResponsiveContainer width="100%" height={300}>
+                                                                    <Recharts.BarChart data={filteredData.age_gender_matrix}>
+                                                                        <defs>
+                                                                            <linearGradient id="colorHeatmap1" x1="0" y1="0" x2="0" y2="1">
+                                                                                <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8} />
+                                                                                <stop offset="95%" stopColor="#ec4899" stopOpacity={0.3} />
+                                                                            </linearGradient>
+                                                                        </defs>
+                                                                        <Recharts.CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                                                        <Recharts.XAxis dataKey="age_range" stroke="#94a3b8" />
+                                                                        <Recharts.YAxis stroke="#94a3b8" />
+                                                                        <Recharts.Tooltip
+                                                                            contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px' }}
+                                                                            content={(props: any) => {
+                                                                                if (props.active && props.payload && props.payload.length) {
+                                                                                    const data = props.payload[0].payload;
+                                                                                    return (
+                                                                                        <div className="bg-slate-800 p-3 rounded-lg border border-slate-600">
+                                                                                            <p className="text-white font-semibold">{data.age_range}</p>
+                                                                                            <p className="text-blue-300">{data.gender}: {data.count}</p>
+                                                                                        </div>
+                                                                                    );
+                                                                                }
+                                                                                return null;
+                                                                            }}
+                                                                        />
+                                                                        <Recharts.Bar dataKey="count" fill="url(#colorHeatmap1)" radius={[8, 8, 0, 0]} />
+                                                                    </Recharts.BarChart>
+                                                                </Recharts.ResponsiveContainer>
+                                                            ) : (
+                                                                <div className="text-gray-400 text-center py-8">Loading chart...</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Price × Session Length Heatmap */}
+                                                {filteredData.price_session_matrix && filteredData.price_session_matrix.length > 0 && (
+                                                    <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10">
+                                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                                                            <span className="text-2xl">💰</span>
+                                                            Price × Session Length Heatmap
+                                                        </h3>
+                                                        <div style={{ minHeight: 300 }}>
+                                                            {Recharts ? (
+                                                                <Recharts.ResponsiveContainer width="100%" height={300}>
+                                                                    <Recharts.BarChart data={filteredData.price_session_matrix}>
+                                                                        <defs>
+                                                                            <linearGradient id="colorHeatmap2" x1="0" y1="0" x2="0" y2="1">
+                                                                                <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                                                                                <stop offset="95%" stopColor="#10b981" stopOpacity={0.3} />
+                                                                            </linearGradient>
+                                                                        </defs>
+                                                                        <Recharts.CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                                                        <Recharts.XAxis dataKey="price_range" stroke="#94a3b8" />
+                                                                        <Recharts.YAxis stroke="#94a3b8" />
+                                                                        <Recharts.Tooltip
+                                                                            contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px' }}
+                                                                            content={(props: any) => {
+                                                                                if (props.active && props.payload && props.payload.length) {
+                                                                                    const data = props.payload[0].payload;
+                                                                                    return (
+                                                                                        <div className="bg-slate-800 p-3 rounded-lg border border-slate-600">
+                                                                                            <p className="text-white font-semibold">Price: {data.price_range} ETB</p>
+                                                                                            <p className="text-green-300">Session: {data.session_length}min - Count: {data.count}</p>
+                                                                                        </div>
+                                                                                    );
+                                                                                }
+                                                                                return null;
+                                                                            }}
+                                                                        />
+                                                                        <Recharts.Bar dataKey="count" fill="url(#colorHeatmap2)" radius={[8, 8, 0, 0]} />
+                                                                    </Recharts.BarChart>
+                                                                </Recharts.ResponsiveContainer>
+                                                            ) : (
+                                                                <div className="text-gray-400 text-center py-8">Loading chart...</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* content */}
                     {hasData ? (
