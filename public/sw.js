@@ -1,7 +1,7 @@
 // Service Worker for Mobile Performance Optimization
 // Implements aggressive caching for static assets
 
-const CACHE_NAME = 'survey-app-v1';
+const CACHE_NAME = 'survey-app-v2';
 const STATIC_CACHE = [
     '/',
     '/student-survey',
