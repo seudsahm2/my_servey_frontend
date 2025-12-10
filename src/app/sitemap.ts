@@ -22,6 +22,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly',
             priority: 0.9, // High priority for key content
         },
+        {
+            url: `${baseUrl}/dashboard/questions`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/dashboard/users`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
         // We do NOT include /admin here
     ]
 }

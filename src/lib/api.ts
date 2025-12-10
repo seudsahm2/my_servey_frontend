@@ -81,26 +81,26 @@ export const loginUser = async (credentials: AuthCredentials): Promise<AuthToken
 
 // Survey Submission APIs
 export const submitStudentSurvey = async (data: StudentSurveyData) => {
-    const response = await api.post('/surveys/student/', data);
+    const response = await api.post('/student-surveys/', data);
     return response.data;
 };
 
 export const checkStudentPhoneAvailability = async (phone: string) => {
     const response = await api.get<{ valid: boolean; exists: boolean }>(
-        '/surveys/student/check-phone/',
+        '/student-surveys/check-phone/',
         { params: { phone } }
     );
     return response.data;
 };
 
 export const submitTeacherSurvey = async (data: TeacherSurveyData) => {
-    const response = await api.post('/surveys/teacher/', data);
+    const response = await api.post('/teacher-surveys/', data);
     return response.data;
 };
 
 export const checkTeacherPhoneAvailability = async (phone: string) => {
     const response = await api.get<{ valid: boolean; exists: boolean }>(
-        '/surveys/teacher/check-phone/',
+        '/teacher-surveys/check-phone/',
         { params: { phone } }
     );
     return response.data;
